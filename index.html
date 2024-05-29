@@ -193,32 +193,41 @@
                 printNextLine(0);
             }
 
+            function clearConsole() {
+                outputLine.innerHTML = '';
+                userInput.focus();
+            }
+
             function processUserInput() {
                 var input = userInput.value.trim();
                 userInput.value = '';
 
-                if (input === 'whoami') {
-                    var messages = [
-                        '$ Hello, and welcome to my blog!',
-                        '$ I am Felix Patryjas, 20 years old, a German student and a hobby software engineer.'
-                    ];
-                    simulateConsoleOutput(messages, function() {
-                        userInput.focus();
-                    });
-                } else {
-                    var errorMessage = '$ Command not recognized: ' + input;
-                    simulateConsoleOutput([errorMessage], function() {
-                        userInput.focus();
+            if (input === 'whoami') {
+                var messages = [
+                    '$ Hello, and welcome to my blog!',
+                    '$ I am Felix Patryjas, 20 years old, a German student and a hobby software engineer.'
+                ];
+                simulateConsoleOutput(messages, function() {
+                    userInput.focus();
+                });
+             }  
+             else if (input === 'clear') {
+                clearConsole();
+             }  
+             else {
+                var errorMessage = '$ Command not recognized: ' + input;
+                simulateConsoleOutput([errorMessage], function() {
+                    userInput.focus();
                     });
                 }
-            }
-
-            userInput.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    processUserInput();
-                }
-            });
-        });
-    </script>
-</body>
+             }
+            
+             userInput.addEventListener('keydown', function(event) {
+                 if (event.key === 'Enter') {
+                     processUserInput();
+                 }
+             });
+           });
+        </script>
+    </body>
 </html>
