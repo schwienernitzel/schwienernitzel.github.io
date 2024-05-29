@@ -12,11 +12,15 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-image: url('logos/back.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             text-align: center;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            color: #fff;
         }
         .container {
             padding: 50px;
@@ -26,7 +30,31 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .profile-name {
+            color: purple;
+            font-family: 'Roboto', sans-serif;
+            font-size: 20px;
             margin-bottom: 20px;
+        }
+        .console {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            overflow: auto;
+            max-height: 300px;
+            white-space: pre-line;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .console-line {
+            margin: 5px 0;
+            color: green;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
         }
         .footer {
             background-color: #333;
@@ -59,13 +87,32 @@
             width: 24px;
             height: 24px;
         }
+        #input-line {
+            margin-top: 10px;
+        }
+        #input-line input {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            width: 90%;
+            margin-left: 10px;
+            outline: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <img src="https://avatars.githubusercontent.com/u/162877035?v=4" alt="Profilbild" class="profile-image">
-        <h1>Felix Patryjas (@schwienernitzel)</h1>
-        <p>Hello, and welcome to my blog! I am Felix Patryjas, 20 years old, a German student and a hobby software engineer.</p>
+        <div class="profile-name">Felix Patryjas (@schwienernitzel)</div>
+        <div class="console" id="console">
+            <div class="console-line">Run 'whoami' for further information.</div>
+            <div class="console-line" id="output-line"></div>
+            <div id="input-line">
+                <span>$ </span><input id="user-input" type="text" autofocus>
+            </div>
+        </div>
     </div>
     <div class="footer">
         <div class="social-links">
@@ -79,9 +126,69 @@
                 <i class="fab fa-telegram"></i>Telegram
             </a>
             <a href="https://xdaforums.com/m/schwienernitzel.12806033/" target="_blank">
-                <img src="logos/xda.png"></i>XDA-Developers
+                <img src="logos/xda.png">XDA-Developers
             </a>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var consoleElement = document.getElementById('console');
+            var outputLine = document.getElementById('output-line');
+            var userInput = document.getElementById('user-input');
+
+            userInput.focus();
+
+            function typeWriter(text, i, cb) {
+                if (i < text.length) {
+                    outputLine.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(function() { typeWriter(text, i, cb); }, 50);
+                } else {
+                    cb();
+                }
+            }
+
+            function simulateConsoleOutput(textArray, cb) {
+                outputLine.innerHTML = '';
+                function printNextLine(i) {
+                    if (i < textArray.length) {
+                        typeWriter(textArray[i], 0, function() {
+                            outputLine.innerHTML += '<br>';
+                            printNextLine(i + 1);
+                        });
+                    } else {
+                        cb();
+                    }
+                }
+                printNextLine(0);
+            }
+
+            function processUserInput() {
+                var input = userInput.value.trim();
+                userInput.value = '';
+
+                if (input === 'whoami') {
+                    var messages = [
+                        '$ Hello, and welcome to my blog!',
+                        '$ I am Felix Patryjas, 20 years old, a German student and a hobby software engineer.'
+                    ];
+                    simulateConsoleOutput(messages, function() {
+                        userInput.focus();
+                    });
+                } else {
+                    var errorMessage = '$ Command not recognized: ' + input;
+                    simulateConsoleOutput([errorMessage], function() {
+                        userInput.focus();
+                    });
+                }
+            }
+
+            userInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    processUserInput();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
